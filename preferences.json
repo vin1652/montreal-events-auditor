@@ -1,0 +1,6 @@
+{
+  "liked_categories": ["music", "food", "festival", "market", "exhibition","film"],
+  "liked_boroughs": ["Le Plateau-Mont-Royal", "Ville-Marie", "Vieux-Montréal"],
+  "price": {"free_only": false, "max": 50},
+  "time_window": {"weekday_evenings": true, "weekends": true}
+}

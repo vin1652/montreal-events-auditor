@@ -1,0 +1,11 @@
+langchain
+langgraph
+requests
+pandas
+python-dateutil
+faiss-cpu
+sentence-transformers
+jinja2
+matplotlib
+langchain_groq
+python-dotenv
