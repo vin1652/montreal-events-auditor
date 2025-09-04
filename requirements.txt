@@ -3,9 +3,10 @@ langgraph
 requests
 pandas
 python-dateutil
-faiss-cpu
-sentence-transformers
+fastembed
+numpy
 jinja2
 matplotlib
 langchain_groq
 python-dotenv
+pytz
