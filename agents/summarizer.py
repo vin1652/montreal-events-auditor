@@ -127,7 +127,8 @@ def summarize_to_markdown(df_ranked: pd.DataFrame, run_iso: str) -> str:
 
 def save_report(md: str, run_iso: str) -> str:
     os.makedirs(REPORTS_DIR, exist_ok=True)
-    path = os.path.join(REPORTS_DIR, f"{run_iso[:10]}_weekly_tldr.md")
+    # Use a fixed filename:
+    path = os.path.join(REPORTS_DIR, "weekly_tldr.md")
     with open(path, "w", encoding="utf-8") as f:
         f.write(md)
     return path
