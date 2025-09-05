@@ -10,6 +10,7 @@ permissions:
   contents: write
 
 env:
+  BRANCH: "main"                 # <<< change this to the branch you want
   PYTHON_VERSION: "3.11"
   OLLAMA_HOST: "http://127.0.0.1:11434"
   TOP_N: "5"
@@ -30,7 +31,8 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # allow pull --rebase later
+          fetch-depth: 0                # allow rebase
+          ref: ${{ env.BRANCH }}        # checkout target branch
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -64,7 +66,7 @@ jobs:
         run: |
           curl -fsSL https://ollama.com/install.sh | sh
 
-      - name: Start Ollama (background) and wait until ready
+      - name: Start Ollama (background) and wait until ready)
         run: |
           nohup ollama serve >/dev/null 2>&1 &
           for i in {1..60}; do
@@ -102,21 +104,24 @@ jobs:
         run: |
           python -m graph.weekly_flow
 
+      # --- Rebase on remote, then add/commit/push latest report ---
       - name: Commit latest report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # make sure we're on the target branch
+          git checkout $BRANCH
+          # fetch and rebase with autostash to avoid 'unstaged changes' error
+          git fetch origin $BRANCH
+          git pull --rebase --autostash origin $BRANCH
+          # stage only the files we expect
           git add reports/weekly_tldr.md data/last_run.json || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
-            exit 0
+          else
+            git commit -m "chore: weekly report $(date -u +'%Y-%m-%d')"
+            git push origin $BRANCH
           fi
-          for i in 1 2 3; do
-            git pull --rebase origin main || { echo "Rebase failed"; exit 1; }
-            git push && break
-            echo "Push failed, retrying in 3 seconds..."
-            sleep 3
-          done
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
