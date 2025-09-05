@@ -102,19 +102,21 @@ jobs:
         run: |
           python -m graph.weekly_flow
 
-      # Commit only the latest report + cursor file (if changed)
       - name: Commit latest report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
           git add reports/weekly_tldr.md data/last_run.json || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
-          else
-            git commit -m "chore: weekly report $(date -u +'%Y-%m-%d')"
-            git push
+            exit 0
           fi
+          for i in 1 2 3; do
+            git pull --rebase origin main || { echo "Rebase failed"; exit 1; }
+            git push && break
+            echo "Push failed, retrying in 3 seconds..."
+            sleep 3
+          done
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
