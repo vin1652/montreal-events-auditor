@@ -8,5 +8,6 @@ numpy
 jinja2
 matplotlib
 langchain_groq
+langchain_community
 python-dotenv
 pytz
