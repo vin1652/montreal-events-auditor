@@ -1,6 +1,6 @@
 ## Montréal Events Auditor 
 
-Automated weekly pipeline that fetches Montréal public events, applies your hard filters, ranks with a free-text “likes” prompt (via local embeddings with Ollama), enriches with weather, and generates a concise English TL;DR newsletter: reports/weekly_tldr.md.
+Automated weekly pipeline that fetches Montréal public events, applies hard filters, ranks with a free-text “likes” prompt (via local embeddings with Ollama), enriches with weather, and generates a concise English TL;DR newsletter: reports/weekly_tldr.md.
 
 Runs on GitHub-hosted runners (no self-host needed)
 
@@ -146,6 +146,7 @@ EMB_WEIGHT / BOROUGH_WEIGHT (defaults 0.7 / 0.3): blend between semantic match a
 
 requirements.txt (pinned to avoid resolver issues on runners):
 
+``` bash
 langchain>=0.2.14
 langchain-community>=0.2.14
 langchain-groq>=0.1.5
@@ -157,7 +158,7 @@ jinja2>=3.1.4
 python-dotenv>=1.0.1
 matplotlib>=3.8.4
 faiss-cpu
-
+```
 ## 🧵 How ranking works (short)
 
 Each event → text: "{title} | {first 300 chars of description}"
