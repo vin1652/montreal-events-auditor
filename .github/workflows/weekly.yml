@@ -18,6 +18,7 @@ env:
   MAX_EVENTS_FOR_SUMMARY: "10"
   EMB_WEIGHT: "0.7"
   BOROUGH_WEIGHT: "0.3"
+  SHORTLIST_K: "20"
 
 concurrency:
   group: weekly-montreal-events

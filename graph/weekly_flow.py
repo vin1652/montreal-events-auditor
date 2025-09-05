@@ -197,7 +197,7 @@ def run():
     TOP_N = _env_int("TOP_N", 5)
     WINDOW_DAYS = _env_int("WINDOW_DAYS", 7)
 
-    print("▶️  Step 1/9 — COLLECT (CKAN dataset)")
+    print("▶️  Step 1/10 — COLLECT (CKAN dataset)")
     df_raw, run_iso = collect()
     print(f"   - rows fetched: {len(df_raw)}")
     if df_raw.empty:
@@ -207,7 +207,7 @@ def run():
         save_last_run(run_iso)
         return
 
-    print("▶️  Step 2/9 — CLEAN (minimal aliases, no heavy transforms)")
+    print("▶️  Step 2/10 — CLEAN (minimal aliases, no heavy transforms)")
     df = clean(df_raw)
     print(f"   - rows after clean: {len(df)}")
     if df.empty:
@@ -217,7 +217,7 @@ def run():
         save_last_run(run_iso)
         return
 
-    print(f"▶️  Step 3/9 — FILTER (prochaines {WINDOW_DAYS} jours)")
+    print(f"▶️  Step 3/10 — FILTER (prochaines {WINDOW_DAYS} jours)")
     df_week = _upcoming_window(df, days=WINDOW_DAYS)
     print(f"   - rows in window: {len(df_week)}")
     if df_week.empty:
@@ -227,7 +227,7 @@ def run():
         save_last_run(run_iso)
         return
 
-    print("▶️  Step 4/9 — HARD FILTERS (preferences.json)")
+    print("▶️  Step 4/10 — HARD FILTERS (preferences.json)")
     df_hard = _apply_hard_filters(df_week)
     print(f"   - rows after hard filters: {len(df_hard)}")
     if df_hard.empty:
@@ -237,27 +237,44 @@ def run():
         save_last_run(run_iso)
         return
 
-    print("▶️  Step 5/9 — RANK (likes string embeddings via Ollama)")
+        # after df_hard is created (hard filters applied)
+
+    print("▶️  Step 5/10 — RANK (likes embeddings via Ollama)")
     df_ranked = rank(df_hard)
     print(f"   - ranked rows: {len(df_ranked)}")
 
-    print("▶️  Step 6/9 — BOROUGH BOOST (order from arrondissement_allow)")
-    df_ranked = _add_borough_preference_score(df_ranked)
-    df_ranked = _combine_scores(df_ranked, emb_col="score")
+    SHORTLIST_K = _env_int("SHORTLIST_K", 20)
 
-    print(f"▶️  Step 7/9 — SELECT Top-{TOP_N}")
-    df_top = df_ranked.head(TOP_N).copy()
-    print(f"   - selected rows: {len(df_top)}")
+    print(f"▶️  Step 6/10 — SHORTLIST top {SHORTLIST_K} for deeper reasoning")
+    df_short = df_ranked.head(SHORTLIST_K).copy()
+    print(f"   - shortlist rows: {len(df_short)}")
 
-    print("▶️  Step 8/9 — WEATHER (Open-Meteo) for Top-N only")
-    df_top = enrich_weather(df_top)
-    print("   - added: temp_c, rain_prob")
+    print("▶️  Step 7/10 — WEATHER (Open-Meteo) for shortlist")
+    df_short = enrich_weather(df_short)
 
-    print("▶️  Step 9/9 — SUMMARIZE & SAVE")
+    print("▶️  Step 8/10 — LLM SELECTION (choose final events best for you)")
+    from agents.summarizer import select_events_with_llm  # new function (below)
+    chosen = select_events_with_llm(df_short, prefs_path="preferences.json", final_n=_env_int("TOP_N", 5))
+    if chosen and isinstance(chosen, list):
+        df_top = df_short[df_short["url"].isin(chosen)].copy()  # using URL as stable ID
+        # Fallback if LLM returned fewer than needed
+        if len(df_top) < _env_int("TOP_N", 5):
+            needed = _env_int("TOP_N", 5) - len(df_top)
+            extras = df_short[~df_short["url"].isin(chosen)].head(needed)
+            df_top = pd.concat([df_top, extras], ignore_index=True)
+    else:
+        print("   - LLM selection failed to parse; falling back to top-N of shortlist")
+        df_top = df_short.head(_env_int("TOP_N", 5)).copy()
+
+    print("▶️  Step 9/10 — ORDER by combined score for display (optional)")
+    # keep your borough boost if you want to preserve that ordering signal:
+    df_top = _add_borough_preference_score(df_top)
+    df_top = _combine_scores(df_top, emb_col="score")
+
+    print("▶️  Step 10/10 — SUMMARIZE & SAVE (English)")
     md = summarize_to_markdown(df_top, run_iso)
     path = save_report(md, run_iso)
     save_last_run(run_iso)
-
     print(f"✅  Done. Report: {path}")
 
 
