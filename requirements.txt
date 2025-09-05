@@ -7,7 +7,7 @@ fastembed
 numpy
 jinja2
 matplotlib
-langchain_groq
-langchain_community
+langchain-groq
+langchain-community
 python-dotenv
 pytz
