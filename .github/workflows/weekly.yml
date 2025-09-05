@@ -113,19 +113,29 @@ jobs:
           git checkout main
           git pull --rebase origin main
 
-      # Commit only the latest report + cursor (if changed)
       - name: Commit latest report
         run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Ensure we're on the default branch and up to date
+          git fetch origin main
+          git checkout main
+          git pull --rebase --autostash origin main
+
+          # Stage new files
           git add reports/weekly_tldr.md data/last_run.json || true
+
+          # Commit if anything changed
           if git diff --cached --quiet; then
             echo "No changes to commit."
-          else
-            git commit -m "chore: weekly report $(date -u +'%Y-%m-%d')"
-            git push origin HEAD:main
+            exit 0
           fi
 
-      - name: Upload report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: weekly-report
-          path: reports/weekly_tldr.md
+          git commit -m "chore: weekly report $(date -u +'%Y-%m-%d')"
+
+          # Rebase again in case upstream moved while we were committing,
+          # then push (retry once if race condition)
+          git pull --rebase --autostash origin main || true
+          git push origin HEAD:main || (git pull --rebase --autostash origin main && git push origin HEAD:main)
