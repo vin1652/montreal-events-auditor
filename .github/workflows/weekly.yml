@@ -12,9 +12,9 @@ permissions:
 env:
   PYTHON_VERSION: "3.11"
   OLLAMA_HOST: "http://127.0.0.1:11434"
-  TOP_N: "10"
+  TOP_N: "5"
   WINDOW_DAYS: "7"
-  MAX_EVENTS_FOR_SUMMARY: "10"
+  MAX_EVENTS_FOR_SUMMARY: "5"
   EMB_WEIGHT: "0.7"
   BOROUGH_WEIGHT: "0.3"
 
@@ -39,7 +39,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('**/requirements.txt') }}
+          # bump the cache key (v2) so we don't restore a stale env
+          key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-v2-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-v2-
 
       - name: Cache Ollama models
         uses: actions/cache@v4
@@ -51,8 +54,16 @@ jobs:
 
       - name: Install Python deps
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
+          python - <<'PY'
+import pkgutil
+mods = {m.name for m in pkgutil.iter_modules()}
+print("has langchain_community?", "langchain_community" in mods)
+import langchain, langchain_community
+print("langchain:", langchain.__version__)
+print("langchain-community:", langchain_community.__version__)
+PY
 
       # --- Install & start Ollama on the hosted runner ---
       - name: Install Ollama
@@ -87,7 +98,7 @@ jobs:
           fi
           echo "GROQ_API_KEY=${GROQ_API_KEY}" >> $GITHUB_ENV
 
-      # --- Clean previous report ---
+      # --- Clean previous report (we keep only the latest) ---
       - name: Clean old report
         run: |
           mkdir -p reports
@@ -97,7 +108,7 @@ jobs:
         run: |
           python -m graph.weekly_flow
 
-      # Commit only the single latest report
+      # Commit only the latest report + cursor file (if changed)
       - name: Commit latest report
         run: |
           git config user.name "github-actions[bot]"
