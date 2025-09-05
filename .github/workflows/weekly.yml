@@ -56,14 +56,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          python - <<'PY'
-import pkgutil
-mods = {m.name for m in pkgutil.iter_modules()}
-print("has langchain_community?", "langchain_community" in mods)
-import langchain, langchain_community
-print("langchain:", langchain.__version__)
-print("langchain-community:", langchain_community.__version__)
-PY
+          python -c "import langchain, langchain_community; print('langchain', langchain.__version__); print('langchain-community', langchain_community.__version__)"
 
       # --- Install & start Ollama on the hosted runner ---
       - name: Install Ollama
@@ -94,7 +87,7 @@ PY
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           if [ -z "$GROQ_API_KEY" ]; then
-            echo "⚠️ GROQ_API_KEY not set; summarizer will use fallback."
+            echo "GROQ_API_KEY not set; summarizer will use fallback."
           fi
           echo "GROQ_API_KEY=${GROQ_API_KEY}" >> $GITHUB_ENV
 
