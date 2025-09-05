@@ -29,6 +29,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0            # full history so we can rebase
+          persist-credentials: true # use GITHUB_TOKEN to push
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,7 +42,6 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          # bump the cache key (v2) so we don't restore a stale env
           key: pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-v2-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             pip-${{ runner.os }}-${{ env.PYTHON_VERSION }}-v2-
@@ -101,17 +103,25 @@ jobs:
         run: |
           python -m graph.weekly_flow
 
-      # Commit only the latest report + cursor file (if changed)
-      - name: Commit latest report
+      # --- Prepare Git (fetch & rebase to avoid non-fast-forward rejects) ---
+      - name: Prepare Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Ensure we're on main and up to date
+          git fetch origin main
+          git checkout main
+          git pull --rebase origin main
+
+      # Commit only the latest report + cursor (if changed)
+      - name: Commit latest report
+        run: |
           git add reports/weekly_tldr.md data/last_run.json || true
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "chore: weekly report $(date -u +'%Y-%m-%d')"
-            git push
+            git push origin HEAD:main
           fi
 
       - name: Upload report artifact
