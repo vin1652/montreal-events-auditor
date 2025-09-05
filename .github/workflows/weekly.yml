@@ -13,9 +13,9 @@ env:
   BRANCH: "main"                 # <<< change this to the branch you want
   PYTHON_VERSION: "3.11"
   OLLAMA_HOST: "http://127.0.0.1:11434"
-  TOP_N: "5"
+  TOP_N: "10"
   WINDOW_DAYS: "7"
-  MAX_EVENTS_FOR_SUMMARY: "5"
+  MAX_EVENTS_FOR_SUMMARY: "10"
   EMB_WEIGHT: "0.7"
   BOROUGH_WEIGHT: "0.3"
 
