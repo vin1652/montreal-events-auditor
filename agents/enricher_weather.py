@@ -11,7 +11,7 @@ def _nearest_hour_index(times: pd.Series, target: pd.Timestamp) -> int | None:
     """Return index of the time value closest to target; None if empty."""
     if times.empty:
         return None
-    # Convert to pandas Timestamps for safe subtraction
+    # Converting to pandas Timestamps for safe subtraction
     diffs = (times - target).abs()
     return int(diffs.argmin())
 
@@ -24,9 +24,7 @@ def _fetch_hourly_weather(lat: float, lon: float, tz: str, date_from: pd.Timesta
         "latitude": float(lat),
         "longitude": float(lon),
         "hourly": "temperature_2m,precipitation_probability",
-        "timezone": tz,  # e.g., "America/Toronto"
-        # You can pass a start_date/end_date; for simplicity we let Open-Meteo decide using forecast horizon.
-        # If you want to be strict, add "start_date" and "end_date" in YYYY-MM-DD.
+        "timezone": tz,  #  "America/Toronto"
     }
     r = requests.get(OPEN_METEO, params=params, timeout=15)
     r.raise_for_status()
@@ -55,13 +53,13 @@ def _approx_for_event(lat: float, lon: float, when: pd.Timestamp, tz: str = "Ame
             return (np.nan, np.nan)
         temp_c = float(bundle["temps"].iloc[idx]) if idx < len(bundle["temps"]) else np.nan
         rain_p = float(bundle["pprob"].iloc[idx]) if idx < len(bundle["pprob"]) else np.nan
-        # Clean up: cap ranges and round for a friendlier report
+        # Clean up: cap ranges and round 
         if not np.isnan(rain_p):
             rain_p = max(0.0, min(100.0, rain_p))
         return (round(temp_c, 1) if not np.isnan(temp_c) else np.nan,
                 round(rain_p, 0) if not np.isnan(rain_p) else np.nan)
     except Exception:
-        # On any network/format error, fail soft
+        # For any network/format error
         return (np.nan, np.nan)
 
 def enrich_weather(df: pd.DataFrame, tz: str = "America/Toronto") -> pd.DataFrame:
@@ -89,7 +87,7 @@ def enrich_weather(df: pd.DataFrame, tz: str = "America/Toronto") -> pd.DataFram
         & out.get("lon", pd.Series([np.nan]*len(out))).notna()
     )
 
-    # Iterate minimalistically; you can batch/group later if desired
+
     for idx, row in out[mask].iterrows():
         when = pd.to_datetime(row["start_datetime"]).tz_localize(None)
         lat, lon = float(row["lat"]), float(row["lon"])

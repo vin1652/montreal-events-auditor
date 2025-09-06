@@ -23,9 +23,8 @@ def _model():
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         return None
-    # You can switch model name via env if desired.
+    
     model_name = os.getenv("GROQ_MODEL", "llama3-8b-8192")
-    # Keep temperature low for consistent selection & summaries.
     return ChatGroq(temperature=0.2, model_name=model_name, groq_api_key=api_key)
 
 
@@ -44,7 +43,6 @@ def _fmt_date(val) -> str:
         return ""
     try:
         ts = pd.to_datetime(val)
-        # Example: Fri, Sep 05 • 19:30
         return ts.tz_localize("America/Toronto", nonexistent="NaT", ambiguous="NaT").strftime("%a, %b %d • %H:%M")
     except Exception:
         try:
@@ -55,19 +53,19 @@ def _fmt_date(val) -> str:
 
 def _rows_to_min_json(df: pd.DataFrame) -> List[dict]:
     """
-    Convert rows to a compact JSON structure the LLM can reason over.
-    Keep only useful fields; translate is handled by the LLM in prompts.
+    Converts rows to a compact JSON structure the LLM can reason over.
+    Keep only useful fields; translate is handled by the LLM in the prompts.
     """
     out = []
     for _, r in df.iterrows():
         out.append({
-            "title": (r.get("title") or r.get("titre") or "")[:200],
-            "url": (r.get("url") or r.get("url_fiche") or ""),
-            "borough": (r.get("borough") or r.get("arrondissement") or ""),
-            "event_type": (r.get("event_type") or r.get("type_evenement") or ""),
-            "start": str(r.get("start_datetime") or r.get("date_debut") or ""),
+            "title": (r.get("titre") or "")[:200],
+            "url": (r.get("url_fiche") or ""),
+            "borough": (r.get("arrondissement") or ""),
+            "event_type": (r.get("type_evenement") or ""),
+            "start": str(r.get("date_debut") or ""),
             "is_free": bool(r.get("is_free", False)),
-            "audience": (r.get("audience") or r.get("public_cible") or ""),
+            "audience": (r.get("public_cible") or ""),
             "temp_c": None if pd.isna(r.get("temp_c")) else float(r.get("temp_c")),
             "rain_prob": None if pd.isna(r.get("rain_prob")) else float(r.get("rain_prob")),
             "desc": (r.get("description") or "")[:600]
@@ -75,7 +73,7 @@ def _rows_to_min_json(df: pd.DataFrame) -> List[dict]:
     return out
 
 
-# ---------- LLM selection (decide which events to keep) ----------
+# ---------- LLM selection (deciding which events to keep) ----------
 def select_events_with_llm(
     df_short: pd.DataFrame,
     prefs_path: str,
@@ -99,7 +97,7 @@ def select_events_with_llm(
     borough_order = hard.get("arrondissement_allow", [])
 
     system = SystemMessage(content=(
-        "You are an events concierge. You choose a final set of events that best fit the user's preferences.\n"
+        "You are an event selector and outing planner. You choose a final set of events in Montreal that closely fit the user's preferences.\n"
         "Output must be **JSON only**, no extra prose. English only."
     ))
     human = HumanMessage(content=(
@@ -133,7 +131,7 @@ def select_events_with_llm(
         return None
 
 
-# ---------- TL;DR newsletter (English-only) ----------
+# ---------- TL;DR newsletter Generation Function (English-only) ----------
 def _compose_prompt(bullets: List[str]) -> List:
     """
     Compose a prompt for English-only Markdown newsletter generation.
@@ -168,17 +166,17 @@ def _build_event_bullets(df: pd.DataFrame, limit: int = 20) -> List[str]:
     Create compact, English-ready bullets from df rows.
     (The LLM will still translate any remaining FR words per prompt.)
     """
-    needed = ["title", "borough", "event_type", "url", "venue_full", "is_free", "start_datetime", "temp_c", "rain_prob"]
+    needed = ["titre", "arrondissement", "type_evenement", "url_fiche", "venue_full", "is_free", "start_datetime", "temp_c", "rain_prob"]
     for c in needed:
         if c not in df.columns:
             df[c] = None
 
     bullets = []
     for _, r in df.head(limit).iterrows():
-        title = (r["title"] or r.get("titre") or "").strip()
-        url = (r["url"] or r.get("url_fiche") or "").strip()
-        boro = (r["borough"] or r.get("arrondissement") or "").strip()
-        etype = (r["event_type"] or r.get("type_evenement") or "").strip()
+        title = ( r.get("titre") or "").strip()
+        url = ( r.get("url_fiche") or "").strip()
+        boro = ( r.get("arrondissement") or "").strip()
+        etype = ( r.get("type_evenement") or "").strip()
         start = _fmt_date(r["start_datetime"] or r.get("date_debut"))
         venue = (r["venue_full"] or "").strip()
         tags = []

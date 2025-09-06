@@ -16,7 +16,7 @@ from agents.ranker_faiss import rank
 from agents.summarizer import summarize_to_markdown, save_report
 
 
-# ---------- Small helpers ----------
+# ---------- General helpers ----------
 
 def _env_int(name: str, default: int) -> int:
     try:
@@ -60,8 +60,8 @@ def _apply_hard_filters(df: pd.DataFrame, prefs_path: str = "preferences.json") 
       - emplacement_exclude (e.g., 'en ligne')
       - type_evenement_allow
       - arrondissement_allow
-      - pricing: free_only / max_price (best-effort)
-    Works on original French columns from the dataset (cleaner keeps them).
+      - pricing: free_only / max_price 
+    Works on original French columns from the dataset.
     """
     if df.empty:
         return df
@@ -110,7 +110,6 @@ def _apply_hard_filters(df: pd.DataFrame, prefs_path: str = "preferences.json") 
         if free_only:
             df = df.loc[cost.str.contains("gratuit", na=False)].copy()
         elif isinstance(max_price, (int, float)):
-            # naive parse numbers like "5 $" or "12,50 $"
             price_num = cost.str.extract(r"(\d+[\.,]?\d*)", expand=False).str.replace(",", ".", regex=False)
             price_num = pd.to_numeric(price_num, errors="coerce")
             df = df.loc[cost.str.contains("gratuit", na=False) | (price_num <= float(max_price))].copy()
@@ -197,7 +196,7 @@ def run():
     TOP_N = _env_int("TOP_N", 5)
     WINDOW_DAYS = _env_int("WINDOW_DAYS", 7)
 
-    print("▶️  Step 1/10 — COLLECT (CKAN dataset)")
+    print(" Step 1/10 — COLLECT (CKAN dataset)")
     df_raw, run_iso = collect()
     print(f"   - rows fetched: {len(df_raw)}")
     if df_raw.empty:
@@ -207,52 +206,52 @@ def run():
         save_last_run(run_iso)
         return
 
-    print("▶️  Step 2/10 — CLEAN (minimal aliases, no heavy transforms)")
+    print(" Step 2/10 — CLEAN (minimal aliases, no heavy transforms)")
     df = clean(df_raw)
     print(f"   - rows after clean: {len(df)}")
     if df.empty:
         md = "# Montréal — Vide après nettoyage\n\n_Données récupérées mais aucune ligne exploitable._\n"
         path = save_report(md, run_iso)
-        print(f"✅  Wrote report: {path}")
+        print(f"  Wrote report: {path}")
         save_last_run(run_iso)
         return
 
-    print(f"▶️  Step 3/10 — FILTER (prochaines {WINDOW_DAYS} jours)")
+    print(f" Step 3/10 — FILTER (prochaines {WINDOW_DAYS} jours)")
     df_week = _upcoming_window(df, days=WINDOW_DAYS)
     print(f"   - rows in window: {len(df_week)}")
     if df_week.empty:
         md = f"# Montréal — Prochaines {WINDOW_DAYS} jours\n\n_Aucun événement à venir._\n"
         path = save_report(md, run_iso)
-        print(f"✅  Wrote report: {path}")
+        print(f" Wrote report: {path}")
         save_last_run(run_iso)
         return
 
-    print("▶️  Step 4/10 — HARD FILTERS (preferences.json)")
+    print(" Step 4/10 — HARD FILTERS (preferences.json)")
     df_hard = _apply_hard_filters(df_week)
     print(f"   - rows after hard filters: {len(df_hard)}")
     if df_hard.empty:
         md = "# Montréal — Filtres appliqués\n\n_Aucun événement ne correspond à vos filtres._\n"
         path = save_report(md, run_iso)
-        print(f"✅  Wrote report: {path}")
+        print(f"  Wrote report: {path}")
         save_last_run(run_iso)
         return
 
         # after df_hard is created (hard filters applied)
 
-    print("▶️  Step 5/10 — RANK (likes embeddings via Ollama)")
+    print(" Step 5/10 — RANK (likes embeddings via Ollama)")
     df_ranked = rank(df_hard)
     print(f"   - ranked rows: {len(df_ranked)}")
 
     SHORTLIST_K = _env_int("SHORTLIST_K", 20)
 
-    print(f"▶️  Step 6/10 — SHORTLIST top {SHORTLIST_K} for deeper reasoning")
+    print(f" Step 6/10 — SHORTLIST top {SHORTLIST_K} for deeper reasoning")
     df_short = df_ranked.head(SHORTLIST_K).copy()
     print(f"   - shortlist rows: {len(df_short)}")
 
-    print("▶️  Step 7/10 — WEATHER (Open-Meteo) for shortlist")
+    print(" Step 7/10 — WEATHER (Open-Meteo) for shortlist")
     df_short = enrich_weather(df_short)
 
-    print("▶️  Step 8/10 — LLM SELECTION (choose final events best for you)")
+    print(" Step 8/10 — LLM SELECTION (choose final events best for you)")
     from agents.summarizer import select_events_with_llm  # new function (below)
     chosen = select_events_with_llm(df_short, prefs_path="preferences.json", final_n=_env_int("TOP_N", 5))
     if chosen and isinstance(chosen, list):
@@ -266,21 +265,21 @@ def run():
         print("   - LLM selection failed to parse; falling back to top-N of shortlist")
         df_top = df_short.head(_env_int("TOP_N", 5)).copy()
 
-    print("▶️  Step 9/10 — ORDER by combined score for display (optional)")
+    print(" Step 9/10 — ORDER by combined score for display (optional)")
     # keep your borough boost if you want to preserve that ordering signal:
     df_top = _add_borough_preference_score(df_top)
     df_top = _combine_scores(df_top, emb_col="score")
 
-    print("▶️  Step 10/10 — SUMMARIZE & SAVE (English)")
+    print(" Step 10/10 — SUMMARIZE & SAVE (English)")
     md = summarize_to_markdown(df_top, run_iso)
     path = save_report(md, run_iso)
     save_last_run(run_iso)
-    print(f"✅  Done. Report: {path}")
+    print(f"  Done. Report: {path}")
 
 
 if __name__ == "__main__":
     try:
         run()
     except Exception as e:
-        print("❌ Pipeline failed:", repr(e), file=sys.stderr)
+        print(" Pipeline failed:", repr(e), file=sys.stderr)
         raise
