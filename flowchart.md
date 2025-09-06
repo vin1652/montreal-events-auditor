@@ -1,4 +1,4 @@
-``` mermaid
+
 flowchart LR
     A[Collect<br/>CKAN: Événements publics] --> B[Clean (minimal)<br/>add aliases; keep FR fields]
     B --> C[Hard Filters<br/>window=N days; audience; boroughs; types; no 'en ligne']
