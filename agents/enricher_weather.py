@@ -89,7 +89,7 @@ def enrich_weather(df: pd.DataFrame, tz: str = "America/Toronto") -> pd.DataFram
 
 
     for idx, row in out[mask].iterrows():
-        when = pd.to_datetime(row["start_datetime"]).tz_localize(None)
+        when = pd.to_datetime(row["start_datetime"]).tz_localize(None).replace(hour=18, minute=0, second=0, microsecond=0)
         lat, lon = float(row["lat"]), float(row["lon"])
         temp_c, rain_p = _approx_for_event(lat, lon, when, tz=tz)
         out.at[idx, "temp_c"] = temp_c
