@@ -167,7 +167,9 @@ likes → a single free-text string from preferences.json
 
 Both are embedded via Ollama (nomic-embed-text) → cosine similarity
 
-Borough boost: events in earlier arrondissements from arrondissement_allow get a higher borough_pref and a weighted combined_score
+Borough boost: events in earlier arrondissements from arrondissement_allow get a higher borough_pref and a weighted combined_score from which we get a shortlist of activities
+
+These activities (TOP_K) are fed to the LLM and the LLM acts as the final decision maker and filters the TOP_N events for me to attend!
 
 ## 🧹 Repo hygiene
 
