@@ -193,7 +193,7 @@ def run():
       8) WEATHER for Top-N only
       9) SUMMARIZE & SAVE
     """
-    TOP_N = _env_int("TOP_N", 5)
+    TOP_N = _env_int("TOP_N", 10)
     WINDOW_DAYS = _env_int("WINDOW_DAYS", 7)
 
     print(" Step 1/10 — COLLECT (CKAN dataset)")
@@ -242,7 +242,7 @@ def run():
     df_ranked = rank(df_hard)
     print(f"   - ranked rows: {len(df_ranked)}")
 
-    SHORTLIST_K = _env_int("SHORTLIST_K", 20)
+    SHORTLIST_K = _env_int("SHORTLIST_K", 30)
 
     print(f" Step 6/10 — SHORTLIST top {SHORTLIST_K} for deeper reasoning")
     df_short = df_ranked.head(SHORTLIST_K).copy()
@@ -252,18 +252,18 @@ def run():
     df_short = enrich_weather(df_short)
 
     print(" Step 8/10 — LLM SELECTION (choose final events best for you)")
-    from agents.summarizer import select_events_with_llm  # new function (below)
-    chosen = select_events_with_llm(df_short, prefs_path="preferences.json", final_n=_env_int("TOP_N", 5))
+    from agents.summarizer import select_events_with_llm  
+    chosen = select_events_with_llm(df_short, prefs_path="preferences.json", final_n=_env_int("TOP_N", 10))
     if chosen and isinstance(chosen, list):
-        df_top = df_short[df_short["url"].isin(chosen)].copy()  # using URL as stable ID
+        df_top = df_short[df_short["url_fiche"].isin(chosen)].copy()  #url_fiche is the unique id for events that LLM chose
         # Fallback if LLM returned fewer than needed
-        if len(df_top) < _env_int("TOP_N", 5):
-            needed = _env_int("TOP_N", 5) - len(df_top)
-            extras = df_short[~df_short["url"].isin(chosen)].head(needed)
+        if len(df_top) < _env_int("TOP_N", 10):
+            needed = _env_int("TOP_N", 10) - len(df_top)
+            extras = df_short[~df_short["url_fiche"].isin(chosen)].head(needed)
             df_top = pd.concat([df_top, extras], ignore_index=True)
     else:
         print("   - LLM selection failed to parse; falling back to top-N of shortlist")
-        df_top = df_short.head(_env_int("TOP_N", 5)).copy()
+        df_top = df_short.head(_env_int("TOP_N", 10)).copy()
 
     print(" Step 9/10 — ORDER by combined score for display (optional)")
     # keep your borough boost if you want to preserve that ordering signal:

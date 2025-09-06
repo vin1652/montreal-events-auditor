@@ -10,21 +10,25 @@ import pandas as pd
 from langchain_groq import ChatGroq
 from langchain.schema import SystemMessage, HumanMessage
 
+from dotenv import load_dotenv
+
 # ---------- Constants ----------
 REPORTS_DIR = "reports"
 
+# Load .env so local runs pick up GROQ_API_KEY (Actions uses secrets env already)
+load_dotenv()
 
 # ---------- Model helpers ----------
 def _model():
     """
     Return a Groq Chat model. If GROQ_API_KEY is missing, callers should
-    handle fallback behavior (we'll return None here and skip LLM paths).
+    handle fallback behavior (we'll return None and skip LLM paths).
     """
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         return None
-    
-    model_name = os.getenv("GROQ_MODEL", "llama3-8b-8192")
+    model_name = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+    # Low-ish temperature for consistent picks + wording
     return ChatGroq(temperature=0.2, model_name=model_name, groq_api_key=api_key)
 
 
@@ -53,27 +57,27 @@ def _fmt_date(val) -> str:
 
 def _rows_to_min_json(df: pd.DataFrame) -> List[dict]:
     """
-    Converts rows to a compact JSON structure the LLM can reason over.
-    Keep only useful fields; translate is handled by the LLM in the prompts.
+    Convert rows to a compact JSON structure the LLM can reason over.
+    Keep only useful fields; translation is handled by prompt.
     """
     out = []
     for _, r in df.iterrows():
         out.append({
-            "title": (r.get("titre") or "")[:200],
-            "url": (r.get("url_fiche") or ""),
-            "borough": (r.get("arrondissement") or ""),
-            "event_type": (r.get("type_evenement") or ""),
-            "start": str(r.get("date_debut") or ""),
+            "title": (r.get("title") or r.get("titre") or "")[:200],
+            "url": (r.get("url") or r.get("url_fiche") or ""),
+            "borough": (r.get("borough") or r.get("arrondissement") or ""),
+            "event_type": (r.get("event_type") or r.get("type_evenement") or ""),
+            "start": str(r.get("start_datetime") or r.get("date_debut") or ""),
             "is_free": bool(r.get("is_free", False)),
-            "audience": (r.get("public_cible") or ""),
+            "audience": (r.get("audience") or r.get("public_cible") or ""),
             "temp_c": None if pd.isna(r.get("temp_c")) else float(r.get("temp_c")),
             "rain_prob": None if pd.isna(r.get("rain_prob")) else float(r.get("rain_prob")),
-            "desc": (r.get("description") or "")[:600]
+            "desc": (r.get("description") or "")[:700],
         })
     return out
 
 
-# ---------- LLM selection (deciding which events to keep) ----------
+# ---------- LLM selection (decide which events to keep) ----------
 def select_events_with_llm(
     df_short: pd.DataFrame,
     prefs_path: str,
@@ -97,15 +101,15 @@ def select_events_with_llm(
     borough_order = hard.get("arrondissement_allow", [])
 
     system = SystemMessage(content=(
-        "You are an event selector and outing planner. You choose a final set of events in Montreal that closely fit the user's preferences.\n"
-        "Output must be **JSON only**, no extra prose. English only."
+        "You are an events concierge. Choose the best events for the user.\n"
+        "Output must be JSON only (no extra prose). English only."
     ))
     human = HumanMessage(content=(
         "Task: From the shortlist, pick the best events for the user.\n"
         f"- Return ONLY JSON: {{\"selected_urls\": [\"<url1>\", \"<url2>\", ...]}}\n"
         f"- Choose exactly {final_n} items if possible; if shortlist is smaller, choose all.\n"
-        "- Consider: user likes (free-text), borough preference order (earlier is better), weather (avoid heavy rain for outdoor items),\n"
-        "  audience, event types, price (prefer free/low-cost when appropriate), and variety across picks if possible.\n"
+        "- Consider: user likes (free-text), borough preference order (earlier is better), weather (avoid heavy rain for outdoor),\n"
+        "  audience, event types, price (prefer free/low-cost when appropriate), and variety across picks when possible.\n"
         "- Translate French internally if needed, but output JSON only.\n\n"
         "User likes (free text):\n"
         f"{likes}\n\n"
@@ -123,115 +127,117 @@ def select_events_with_llm(
         data = json.loads(text)
         urls = data.get("selected_urls", [])
         # Validate against shortlist
-        keep_set = set(df_short["url"].fillna("").astype(str).tolist() + df_short["url_fiche"].fillna("").astype(str).tolist() if "url_fiche" in df_short.columns else [])
-        urls = [u for u in urls if u in keep_set]
+        keep_urls = set(
+            (df_short["url"] if "url" in df_short.columns else pd.Series(dtype=str)).fillna("").astype(str).tolist()
+            + (df_short["url_fiche"] if "url_fiche" in df_short.columns else pd.Series(dtype=str)).fillna("").astype(str).tolist()
+        )
+        urls = [u for u in urls if u in keep_urls]
         return urls
     except Exception as e:
         print("LLM selection parse failed:", repr(e))
         return None
 
 
-# ---------- TL;DR newsletter Generation Function (English-only) ----------
-def _compose_prompt(bullets: List[str]) -> List:
+# ---------- Newsletter generation (LLM builds sections) ----------
+def _compose_newsletter_prompt(events_json: List[dict], run_iso: str) -> List:
     """
-    Compose a prompt for English-only Markdown newsletter generation.
+    Let the LLM create the newsletter structure (Top Picks, Free/Low-Cost, Outdoor Options),
+    with flexible counts per section. English-only Markdown.
     """
+    date_label = run_iso[:10] if run_iso else datetime.now().strftime("%Y-%m-%d")
+
     system = SystemMessage(content=(
         "You are a concise newsletter editor.\n"
-        "Write in clear, accessible **English only** (no French or bilingual output).\n"
-        "Translate any French titles/descriptions to natural English, preserving proper nouns and venue names.\n"
+        "Write in clear, accessible English only (no French or bilingual output).\n"
+        "Translate any French titles/descriptions to natural English, preserving proper nouns.\n"
         "Style: scannable Markdown, short lines, neutral/helpful tone, no hype, no invented facts."
     ))
+
     human = HumanMessage(content=(
-        "Turn the following event bullets into a short weekly TL;DR with the sections:\n"
-        "1) Top Picks  2) Free or Low-Cost  3) Outdoor Picks (note temp/rain)\n\n"
+        f"Create a weekly Markdown newsletter for Montreal events (week of {date_label}).\n"
+        "You must build the structure yourself (do not assume fixed counts):\n"
+        " - Title and a 1–2 sentence intro.\n"
+        " - Sections:\n"
+        "   1) Top Picks\n"
+        "   2) Free or Low-Cost\n"
+        "   3) Outdoor Options (note temp/rain if available)\n"
         "Rules:\n"
-        "- Output valid **English** Markdown only (no YAML front matter).\n"
-        "- Intro: 1–2 sentences max.\n"
-        "- Under each section, list 3–5 bullets chosen from the input; avoid duplicates.\n"
-        "- Do not add events that are not present in the input.\n"
-        "- Keep bullets to one line each; include borough and weather notes if provided.\n\n"
-        "EVENT BULLETS:\n" + "\n".join(bullets)
+        " - Use only the events provided below. Do not invent events.\n"
+        " - Each bullet: one line with title, borough, date/time, optional price tag (free), and brief weather tag.\n"
+        " - Include the event URL on the next line after each bullet.\n"
+        " - Choose an appropriate number of bullets per section (typically 3–7) based on the data; avoid duplicates across sections.\n"
+        " - If a section has too few qualified events, include fewer bullets rather than forcing a number.\n"
+        " - English-only output. Valid Markdown. No YAML front matter.\n\n"
+        "EVENTS JSON:\n"
+        f"{json.dumps(events_json, ensure_ascii=False)}"
     ))
     return [system, human]
 
 
 def _default_intro(run_iso: str) -> str:
     date_label = run_iso[:10] if run_iso else datetime.now().strftime("%Y-%m-%d")
-    return f"# Montréal Events — Week of {date_label}\n\nHere are top picks tailored to your preferences. Weather notes are approximate.\n"
+    return f"# Montréal Events — Week of {date_label}\n\nHere are this week’s highlights. Weather notes are approximate.\n"
 
 
-def _build_event_bullets(df: pd.DataFrame, limit: int = 20) -> List[str]:
+def summarize_to_markdown(df_selected: pd.DataFrame, run_iso: str) -> str:
     """
-    Create compact, English-ready bullets from df rows.
-    (The LLM will still translate any remaining FR words per prompt.)
+    Produce the final English Markdown TL;DR for the already-selected events in df_selected.
+    Lets the LLM decide section membership and counts.
+    Falls back to a simple Top Picks list if LLM is unavailable.
     """
-    needed = ["titre", "arrondissement", "type_evenement", "url_fiche", "venue_full", "is_free", "start_datetime", "temp_c", "rain_prob"]
-    for c in needed:
-        if c not in df.columns:
-            df[c] = None
-
-    bullets = []
-    for _, r in df.head(limit).iterrows():
-        title = ( r.get("titre") or "").strip()
-        url = ( r.get("url_fiche") or "").strip()
-        boro = ( r.get("arrondissement") or "").strip()
-        etype = ( r.get("type_evenement") or "").strip()
-        start = _fmt_date(r["start_datetime"] or r.get("date_debut"))
-        venue = (r["venue_full"] or "").strip()
-        tags = []
-        if bool(r.get("is_free", False)):
-            tags.append("free")
-        if pd.notna(r.get("temp_c")):
-            try:
-                tags.append(f"{float(r['temp_c']):.1f}°C")
-            except Exception:
-                pass
-        if pd.notna(r.get("rain_prob")):
-            try:
-                tags.append(f"{int(r['rain_prob'])}% rain")
-            except Exception:
-                pass
-        tag_str = (" — " + ", ".join(tags)) if tags else ""
-        loc_str = f" ({boro})" if boro else ""
-        venue_str = f" — {venue}" if venue else ""
-        etype_str = f" — {etype}" if etype else ""
-
-        bullet = f"- **{title}**{loc_str} — {start}{etype_str}{venue_str}{tag_str}\n  {url}"
-        bullets.append(bullet)
-
-    return bullets
-
-
-def summarize_to_markdown(df: pd.DataFrame, run_iso: str) -> str:
-    """
-    Produce the final English Markdown TL;DR for the selected events in `df`.
-    Uses Groq LLM if available; otherwise falls back to a simple list.
-    """
-    if df is None or df.empty:
+    if df_selected is None or df_selected.empty:
         return _default_intro(run_iso) + "\n_No events matched your filters this week._\n"
 
-    bullets = _build_event_bullets(df, limit=max(10, len(df)))
-
+    ev_json = _rows_to_min_json(df_selected)
+    print("[newsletter] Rows passed to LLM:", len(df_selected))
     llm = _model()
     if llm is None:
-        # Fallback: simple English list without LLM
+        print("[newsletter] GROQ_API_KEY missing or not detected; using fallback.")
+    if llm is None:
+        # Fallback: simple list without LLM
+        bullets = []
+        for _, r in df_selected.iterrows():
+            title = (r.get("title") or r.get("titre") or "").strip()
+            url = (r.get("url") or r.get("url_fiche") or "").strip()
+            boro = (r.get("borough") or r.get("arrondissement") or "").strip()
+            etype = (r.get("event_type") or r.get("type_evenement") or "").strip()
+            start = _fmt_date(r.get("start_datetime") or r.get("date_debut"))
+            tag_free = " — free" if bool(r.get("is_free", False)) else ""
+            wx = []
+            if pd.notna(r.get("temp_c")):
+                try: wx.append(f"{float(r['temp_c']):.1f}°C")
+                except: pass
+            if pd.notna(r.get("rain_prob")):
+                try: wx.append(f"{int(r['rain_prob'])}% rain")
+                except: pass
+            wx_str = (" — " + ", ".join(wx)) if wx else ""
+            bullet = f"- **{title}** ({boro}) — {start} — {etype}{tag_free}{wx_str}\n  {url}"
+            bullets.append(bullet)
+
         intro = _default_intro(run_iso)
-        body = "## Top Picks\n" + "\n".join(bullets[: min(5, len(bullets))])
-        return intro + "\n" + body + "\n"
+        return intro + "\n## Top Picks\n" + "\n".join(bullets[:10]) + "\n"
 
     try:
-        messages = _compose_prompt(bullets)
-        resp = llm.invoke(messages)
+        msgs = _compose_newsletter_prompt(ev_json, run_iso)
+        resp = llm.invoke(msgs)
         text = resp.content or ""
         if not text.strip():
             raise ValueError("Empty LLM response")
         return text
     except Exception as e:
-        print("Summarization failed, using fallback:", repr(e))
-        intro = _default_intro(run_iso)
-        body = "## Top Picks\n" + "\n".join(bullets[: min(5, len(bullets))])
-        return intro + "\n" + body + "\n"
+        print("[NEWSLETTER]Summarization failed, using fallback:", repr(e))
+        # Minimal fallback
+        bullets = []
+        for _, r in df_selected.iterrows():
+            title = (r.get("title") or r.get("titre") or "").strip()
+            url = (r.get("url") or r.get("url_fiche") or "").strip()
+            boro = (r.get("borough") or r.get("arrondissement") or "").strip()
+            start = _fmt_date(r.get("start_datetime") or r.get("date_debut"))
+            bullets.append(f"- **{title}** ({boro}) — {start}\n  {url}")
+        return _default_intro(run_iso) + "\n## Top Picks\n" + "\n".join(bullets[:10]) + "\n"
+
+
+
 
 
 # ---------- Save report ----------

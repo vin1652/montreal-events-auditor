@@ -1,15 +1,30 @@
-# Montréal Events — Week of 2025-09-06
+**Montreal Events Newsletter - Week of September 6, 2025**
 
-Here are top picks tailored to your preferences. Weather notes are approximate.
+This week's newsletter highlights a mix of indoor and outdoor events across Montreal. From dance classes to theater performances, there's something for everyone.
 
-## Top Picks
-- **Party de Bloc 3 : Kiki et communauté ballroom** (Ville-Marie) — Fri, Sep 12 • 00:00 — Jeux — Ville-Marie — free, 11.1°C, 1% rain
-  https://montreal.ca/evenements/party-de-bloc-3-kiki-et-communaute-ballroom-98494
-- **Révolte-toi. Elle a dit. Révolte-toi encore. - Les Adelphes** (Mercier–Hochelaga-Maisonneuve) — Fri, Sep 12 • 00:00 — Théâtre — Mercier–Hochelaga-Maisonneuve — free, 8.8°C, 1% rain
-  https://montreal.ca/evenements/revolte-toi-elle-dit-revolte-toi-encore-les-adelphes-94091
-- **Soirée DJ : Sélecteurs (100% vinyles)** (Ville-Marie) — Thu, Sep 11 • 00:00 — Musique — Ville-Marie — free, 17.5°C, 6% rain
+**Top Picks**
+
+* **Soirée DJ : Sélecteurs (100% vinyles)**, Ville-Marie, September 11, 17:00-22:00, Free, Sunny
   https://montreal.ca/evenements/soiree-dj-selecteurs-100-vinyles-98479
-- **Atelier de réparation** (Côte-des-Neiges–Notre-Dame-de-Grâce) — Wed, Sep 10 • 00:00 — Atelier et cours — Côte-des-Neiges–Notre-Dame-de-Grâce — free, 14.4°C, 0% rain
-  https://montreal.ca/evenements/atelier-de-reparation-98320
-- **La Grande fête du 150e d'Outremont** (Outremont) — Fri, Sep 12 • 00:00 — Fête — Avenue Laurier Ouest piétonne, Outremont — free, 10.7°C, 1% rain
+* **La Grande fête du 150e d'Outremont**, Outremont, September 12-14, 00:00-00:00, Free, Partly Cloudy
+  https://montreal.ca/evenements/la-grande-fete-du-150e-doutremont-97965
+* **Boulevard Bollywood - Cours de danse**, Ville-Marie, September 9, 00:00-00:00, Free, Sunny
+  https://montreal.ca/evenements/boulevard-bollywood-cours-de-danse-90179
+
+**Free or Low-Cost**
+
+* **Marché fermier Baldwin**, Le Plateau-Mont-Royal, September 10, 00:00-00:00, Free, Sunny
+  https://montreal.ca/evenements/marche-fermier-baldwin-88683
+* **La grande vente trottoir de livres**, Le Plateau-Mont-Royal, September 7, 00:00-00:00, Free, Sunny
+  https://montreal.ca/evenements/la-grande-vente-trottoir-de-livres-95159
+* **Club de lecture du mardi soir**, Mercier–Hochelaga-Maisonneuve, September 9, 00:00-00:00, Free, Partly Cloudy
+  https://montreal.ca/evenements/club-de-lecture-du-mardi-soir-95309
+
+**Outdoor Options**
+
+* **Boulevard Bollywood - Cours de danse**, Ville-Marie, September 9, 00:00-00:00, Free, Sunny
+  https://montreal.ca/evenements/boulevard-bollywood-cours-de-danse-90179
+* **Marché fermier Baldwin**, Le Plateau-Mont-Royal, September 10, 00:00-00:00, Free, Sunny
+  https://montreal.ca/evenements/marche-fermier-baldwin-88683
+* **La Grande fête du 150e d'Outremont**, Outremont, September 12-14, 00:00-00:00, Free, Partly Cloudy
   https://montreal.ca/evenements/la-grande-fete-du-150e-doutremont-97965
