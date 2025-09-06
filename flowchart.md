@@ -1,4 +1,4 @@
-``` bash
+``` mermaid
 flowchart LR
     A[Collect\nCKAN: Événements publics] --> B[Clean (minimal)\nadd aliases; keep FR fields]
     B --> C[Hard Filters\nwindow=N days; audience; boroughs; types; no 'en ligne']
