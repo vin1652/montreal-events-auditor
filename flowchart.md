@@ -1,3 +1,4 @@
+``` mermaid
 
 flowchart LR
     A[Collect<br/>CKAN: Événements publics] --> B[Clean (minimal)<br/>add aliases; keep FR fields]
