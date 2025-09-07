@@ -1,15 +1,15 @@
-``` mermaid
-
+```mermaid
 flowchart LR
-    A[Collect<br/>CKAN: Événements publics] --> B[Clean (minimal)<br/>add aliases; keep FR fields]
-    B --> C[Hard Filters<br/>window=N days; audience; boroughs; types; no 'en ligne']
-    C --> D[Embedding Ranker<br/>Ollama nomic-embed-text<br/>cosine vs. likes]
-    D -->|top K| E[Weather Enrichment<br/>Open-Meteo: temp & rain]
-    E --> F[LLM Selection<br/>Groq: choose final N]
-    F --> G[LLM Newsletter<br/>Top Picks / Free / Outdoor<br/>English Markdown]
-    G --> H[Publish<br/>commit reports/weekly_tldr.md<br/>upload artifact]
+    A["Collect\n CKAN: Événements publics"] --> B["Clean (minimal) add aliases; keep FR fields"]
 
-    subgraph "GitHub Actions (Thu night schedule)"
+    B --> C["Hard Filters window=N days; audience; boroughs; types; no 'en ligne'"]
+    C --> D["Embedding Ranker Ollama nomic-embed-text cosine vs. likes"]
+    D -->|top K| E["Weather Enrichment Open-Meteo: temp & rain"]
+    E --> F["LLM Selection Groq: choose final N"]
+    F --> G["LLM Newsletter Top Picks / Free / Outdoor English Markdown"]
+    G --> H["Publish commit reports/weekly_tldr.md upload artifact"]
+
+    subgraph "GitHub Actions"
       A
       B
       C
@@ -19,3 +19,4 @@ flowchart LR
       G
       H
     end
+```
