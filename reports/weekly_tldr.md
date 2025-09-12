@@ -1,30 +1,28 @@
-**Montreal Events Newsletter - Week of September 6, 2025**
+# Montreal Events Newsletter - Week of September 12, 2025
 
-This week's newsletter highlights a mix of free and paid events across Montreal. Check out our top picks, free or low-cost options, and outdoor events.
+Stay up-to-date with the latest events happening in Montreal. This week's highlights include music, art, and community activities.
 
-### Top Picks
+## Top Picks
 
-* **Soirée DJ : Sélecteurs (100% vinyles)**, Ville-Marie, September 11, 17:00-22:00, Free
-  https://montreal.ca/evenements/soiree-dj-selecteurs-100-vinyles-98479
-* **La Grande fête du 150e d'Outremont**, Outremont, September 12-14, 10:00-22:00, Free
-  https://montreal.ca/evenements/la-grande-fete-du-150e-doutremont-97965
-* **Boulevard Bollywood - Cours de danse**, Ville-Marie, September 9, 14:00-16:00, Free
-  https://montreal.ca/evenements/boulevard-bollywood-cours-de-danse-90179
+* **La Grande fête du 150e d'Outremont** - Outremont, September 12-14, Free, Sunny
+  * https://montreal.ca/evenements/la-grande-fete-du-150e-doutremont-97965
+* **DJ sets avec Miracle mART - présenté par Grandes Oreilles** - Outremont, September 12, Free, Sunny
+  * https://montreal.ca/evenements/dj-sets-avec-miracle-mart-presente-par-grandes-oreilles-98764
+* **Œuvre de chair ne désirera qu'en mariage seulement** - Ville-Marie, September 12, Free, Sunny
+  * https://montreal.ca/evenements/oeuvre-de-chair-ne-desirera-quen-mariage-seulement-97938
 
-### Free or Low-Cost
+## Free or Low-Cost
 
-* **Marché fermier Saint-Louis**, Le Plateau-Mont-Royal, September 9, 10:00-17:00, Free
-  https://montreal.ca/evenements/marche-fermier-saint-louis-88659
-* **Les tricots du dimanche**, Le Plateau-Mont-Royal, September 7, 14:00-16:00, Free
-  https://montreal.ca/evenements/les-tricots-du-dimanche-95509
-* **La grande vente trottoir de livres**, Le Plateau-Mont-Royal, September 7, 10:00-17:00, Free
-  https://montreal.ca/evenements/la-grande-vente-trottoir-de-livres-95159
+* **Atelier de conversation en français** - Lachine, September 17, Free, Partly Cloudy
+  * https://montreal.ca/evenements/atelier-de-conversation-en-francais-96369
+* **Rendez-vous tricot-thé** - Mercier–Hochelaga-Maisonneuve, September 11, Free, Sunny
+  * https://montreal.ca/evenements/rendez-vous-tricot-97041
+* **Discuthé** - LaSalle, September 12, Free, Sunny
+  * https://montreal.ca/evenements/discuthe-97116
 
-### Outdoor Options
+## Outdoor Options
 
-* **Boulevard Bollywood - Cours de danse**, Ville-Marie, September 9, 14:00-16:00, Sunny, 20°C
-  https://montreal.ca/evenements/boulevard-bollywood-cours-de-danse-90179
-* **Marché fermier Saint-Louis**, Le Plateau-Mont-Royal, September 9, 10:00-17:00, Sunny, 20°C
-  https://montreal.ca/evenements/marche-fermier-saint-louis-88659
-* **La Grande fête du 150e d'Outremont**, Outremont, September 12-14, 10:00-22:00, Partly cloudy, 16°C
-  https://montreal.ca/evenements/la-grande-fete-du-150e-doutremont-97965
+* **Le Grand défilé Laurier Ouest** - Outremont, September 13, Free, Unknown
+  * https://montreal.ca/evenements/le-grand-defile-laurier-ouest-97051
+* **Le Tradorchestre | Patrimoine en fête** - Verdun, September 13, Free, Unknown
+  * https://montreal.ca/evenements/le-tradorchestre-patrimoine-en-fete-98855
