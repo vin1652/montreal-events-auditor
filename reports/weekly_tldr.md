@@ -1,28 +1,36 @@
-**Montreal Events Newsletter - Week of September 26, 2025**
+# Montreal Events - Week of October 3
 
-Discover the best events happening in Montreal this week.
+Stay up-to-date with the latest events in Montreal. This week's highlights include film screenings, workshops, and outdoor activities.
 
-**Top Picks**
+## Top Picks
 
-* **CinéPlace du Village: projection de films queer avec Les Filministes** (Ville-Marie, September 27, 15:00, free) 
-  https://montreal.ca/evenements/cineplace-du-village-projection-de-films-queer-avec-les-filministes-98585
-* **Jean de Nivelle et Cadet Roussel: concert de musique ancienne** (Lachine, September 28, 15:00, free) 
-  https://montreal.ca/evenements/jean-de-nivelle-et-cadet-roussel-concert-de-musique-ancienne-97626
-* **Rencontres musique et chant prénatal pour femmes enceintes** (Ville-Marie, September 30, 10:00, free) 
-  https://montreal.ca/evenements/rencontres-musique-et-chant-prenatal-pour-femmes-enceintes-99229
+* Ernest Cole, Photographer - Festival International du Film sur l'Art
+  Saint-Laurent, October 7, 19:30, Free, Rainy
+  https://montreal.ca/evenements/ernest-cole-photographe-festival-international-du-film-sur-lart-95766
+* Atelier de Cyanotype
+  Ville-Marie, October 5, All day, Free, Sunny
+  https://montreal.ca/evenements/atelier-de-cyanotype-99162
+* Marché Fermier et Artisanal
+  Saint-Laurent, October 4, All day, Free, Sunny
+  https://montreal.ca/evenements/marche-fermier-et-artisanal-91349
 
-**Free or Low-Cost**
+## Free or Low-Cost
 
-* **Marché fermier Laurier** (Le Plateau-Mont-Royal, September 25, 10:00, free) 
-  https://montreal.ca/evenements/marche-fermier-laurier-88539
-* **Zone couture et broderie** (Saint-Laurent, September 26, 10:00, free) 
-  https://montreal.ca/evenements/zone-couture-et-broderie-87890
-* **Personnalisation de sacs réutilisables** (Saint-Laurent, September 27, 10:00, free) 
-  https://montreal.ca/evenements/personnalisation-de-sacs-reutilisables-90744
+* Comprendre les Marmottes pour Protéger son Potager
+  Saint-Laurent, October 8, 14:00, Free, Partly Cloudy
+  https://montreal.ca/evenements/comprendre-les-marmottes-pour-proteger-son-potager-99538
+* Atelier de Cuisine: Valorisons ces Mal Aimés, les Courges, c'est TELLEMENT bon!
+  Ville-Marie, October 8, 18:00, Free, Partly Cloudy
+  https://montreal.ca/evenements/atelier-de-cuisine-valorisons-ces-mal-aimes-les-courges-cest-tellement-bon-18-95731
+* Cours de Yoga
+  Verdun, October 4, 10:00, Free, Sunny
+  https://montreal.ca/evenements/cours-de-yoga-94776
 
-**Outdoor Options**
+## Outdoor Options
 
-* **Marché fermier Laurier** (Le Plateau-Mont-Royal, September 25, 10:00, rain expected) 
-  https://montreal.ca/evenements/marche-fermier-laurier-88539
-* **Zone couture et broderie** (Saint-Laurent, September 26, 10:00, partly cloudy) 
-  https://montreal.ca/evenements/zone-couture-et-broderie-87890
+* Soirée Kizomba - Kizomba Com Todos
+  Verdun, October 5, 19:00, Free, Sunny
+  https://montreal.ca/evenements/soiree-kizomba-kizomba-com-todos-92138
+* Isla Salsa
+  Verdun, October 6, 19:00, Free, No Weather Data
+  https://montreal.ca/evenements/isla-salsa-88158
