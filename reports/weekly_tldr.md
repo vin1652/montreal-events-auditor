@@ -1,36 +1,21 @@
-# Montreal Events - Week of October 3
+**Montreal Events Newsletter - October 10-16, 2025**
 
-Stay up-to-date with the latest events in Montreal. This week's highlights include film screenings, workshops, and outdoor activities.
+Discover the best events happening in Montreal this week. From music and art to conversation and creativity, there's something for everyone.
 
-## Top Picks
+### Top Picks
 
-* Ernest Cole, Photographer - Festival International du Film sur l'Art
-  Saint-Laurent, October 7, 19:30, Free, Rainy
-  https://montreal.ca/evenements/ernest-cole-photographe-festival-international-du-film-sur-lart-95766
-* Atelier de Cyanotype
-  Ville-Marie, October 5, All day, Free, Sunny
-  https://montreal.ca/evenements/atelier-de-cyanotype-99162
-* Marché Fermier et Artisanal
-  Saint-Laurent, October 4, All day, Free, Sunny
-  https://montreal.ca/evenements/marche-fermier-et-artisanal-91349
+* **Martin Turgeon présente: Heureux malgré tout!** (Saint-Laurent, 2025-10-11, free, partly cloudy) [https://montreal.ca/evenements/martin-turgeon-presente-heureux-malgre-tout-93742](https://montreal.ca/evenements/martin-turgeon-presente-heureux-malgre-tout-93742)
+* **Brésil mon amour | Florence K** (Le Plateau-Mont-Royal, 2025-10-11, free, partly cloudy) [https://montreal.ca/evenements/bresil-mon-amour-florence-k-97483](https://montreal.ca/evenements/bresil-mon-amour-florence-k-97483)
+* **Duo Beija-Flor - Songes d'Ailleurs, musiques aux inspirations parallèles** (Ville-Marie, 2025-10-11, free, partly cloudy) [https://montreal.ca/evenements/duo-beija-flor-songes-dailleurs-musiques-aux-inspirations-paralleles-95810](https://montreal.ca/evenements/duo-beija-flor-songes-dailleurs-musiques-aux-inspirations-paralleles-95810)
 
-## Free or Low-Cost
+### Free or Low-Cost
 
-* Comprendre les Marmottes pour Protéger son Potager
-  Saint-Laurent, October 8, 14:00, Free, Partly Cloudy
-  https://montreal.ca/evenements/comprendre-les-marmottes-pour-proteger-son-potager-99538
-* Atelier de Cuisine: Valorisons ces Mal Aimés, les Courges, c'est TELLEMENT bon!
-  Ville-Marie, October 8, 18:00, Free, Partly Cloudy
-  https://montreal.ca/evenements/atelier-de-cuisine-valorisons-ces-mal-aimes-les-courges-cest-tellement-bon-18-95731
-* Cours de Yoga
-  Verdun, October 4, 10:00, Free, Sunny
-  https://montreal.ca/evenements/cours-de-yoga-94776
+* **Initiation au ukulélé** (Ville-Marie, 2025-10-09, free, clear) [https://montreal.ca/evenements/initiation-au-ukulele-96508](https://montreal.ca/evenements/initiation-au-ukulele-96508)
+* **Initiation à la reliure caisse (Adultes)** (Ville-Marie, 2025-10-11, free, unknown) [https://montreal.ca/evenements/initiation-la-reliure-caisse-adultes-98425](https://montreal.ca/evenements/initiation-la-reliure-caisse-adultes-98425)
+* **Ateliers d'arts visuels: les mains libres** (Côte-des-Neiges–Notre-Dame-de-Grâce, 2025-10-11, free, unknown) [https://montreal.ca/evenements/ateliers-darts-visuels-les-mains-libres-98671](https://montreal.ca/evenements/ateliers-darts-visuels-les-mains-libres-98671)
 
-## Outdoor Options
+### Outdoor Options
 
-* Soirée Kizomba - Kizomba Com Todos
-  Verdun, October 5, 19:00, Free, Sunny
-  https://montreal.ca/evenements/soiree-kizomba-kizomba-com-todos-92138
-* Isla Salsa
-  Verdun, October 6, 19:00, Free, No Weather Data
-  https://montreal.ca/evenements/isla-salsa-88158
+* **Ateliers musique mère-bébés avant la marche** (Ville-Marie, 2025-10-14, free, partly cloudy) [https://montreal.ca/evenements/ateliers-musique-mere-bebes-avant-la-marche-99247](https://montreal.ca/evenements/ateliers-musique-mere-bebes-avant-la-marche-99247)
+* **Centre des musiciens du monde - Andalusyria** (Ville-Marie, 2025-10-14, free, partly cloudy) [https://montreal.ca/evenements/centre-des-musiciens-du-monde-andalusyria-96235](https://montreal.ca/evenements/centre-des-musiciens-du-monde-andalusyria-96235)
+* **Ateliers de conversation en français** (Saint-Laurent, 2025-10-14, free, partly cloudy) [https://montreal.ca/evenements/ateliers-de-conversation-en-francais-98356](https://montreal.ca/evenements/ateliers-de-conversation-en-francais-98356)
